@@ -1,0 +1,40 @@
+-- =========================
+-- PLACEID SCRIPT LOADER
+-- Prevent double load
+-- =========================
+
+if _G.GAME_LOADER_LOADED then return end
+_G.GAME_LOADER_LOADED = true
+
+-- Ensure game fully loaded
+if not game:IsLoaded() then
+    game.Loaded:Wait()
+end
+
+local PlaceId = game.PlaceId
+
+-- =========================
+--  PLACEID 
+-- dd new games by adding new entries
+-- =========================
+local GameScripts = {
+    [198116126] = "loadstring(game:HttpGet("https://github.com/BIGzelvedn/TradelandsFREE/blob/main/Trial",true))()",
+    [691884101] = "loadstring(game:HttpGet("https://raw.githubusercontent.com/BIGzelvedn/DSS3FREE/refs/heads/main/trials",true))()",
+}
+
+-- =========================
+--  load it
+-- =========================
+local scriptUrl = GameScripts[PlaceId]
+
+if scriptUrl then
+    -- Load and execute the script
+    local success, err = pcall(function()
+        loadstring(game:HttpGet(scriptUrl, true))()
+    end)
+    if not success then
+        warn("script cannot load", err)
+    end
+else
+    warn("Not Supported Game | PlaceId:", PlaceId)
+end
