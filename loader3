@@ -1,7 +1,3 @@
--- =========================
--- loader
--- =========================
-
 if _G.GAME_LOADER_LOADED then return end
 _G.GAME_LOADER_LOADED = true
 
@@ -9,56 +5,49 @@ if not game:IsLoaded() then
     game.Loaded:Wait()
 end
 
-local PlaceId = game.PlaceId
-
 -- =========================
--- VALID KEYS (100)
+-- test
 -- =========================
-local VALID_KEYS = {
-    "ATLAS-X7Q9K-2M8L4","ATLAS-A9F2Q-L8M7C","ATLAS-P4K9M-2Q7L8","ATLAS-Z8LQ2-MK49A",
-    "ATLAS-7M2QK-LA894","ATLAS-KQ8M9-47L2A","ATLAS-2L9A7-MQK84","ATLAS-QM8A2-4L97K",
-    "ATLAS-4KQ8M-9L2A7","ATLAS-A7L9Q-M2K84","ATLAS-MQK8L-29A74","ATLAS-8A9KQ-LM274",
-    "ATLAS-29M4Q-K8AL7","ATLAS-Q8K9A-L247M","ATLAS-L9QK8-MA247","ATLAS-4A7M2-QKL89",
-    "ATLAS-Q2A9M-7K84L","ATLAS-K8Q9L-2A47M","ATLAS-M9A8K-QL247","ATLAS-7Q2K9-ALM84",
-    "ATLAS-KM8Q2-9L47A","ATLAS-9A7LQ-K2M84","ATLAS-Q4K8A-29LM7","ATLAS-M8QK9-A247L",
-    "ATLAS-7L9A2-QKM84","ATLAS-2QK9M-AL847","ATLAS-Q8M4L-29AK7","ATLAS-AKQ8M-7L249",
-    "ATLAS-4M9Q2-KA87L","ATLAS-QK9L8-M247A","ATLAS-8Q9A4-LM2K7","ATLAS-9K2M7-QAL84",
-    "ATLAS-QA8L4-9K2M7","ATLAS-2M7Q9-KA4L8","ATLAS-LQK82-947MA","ATLAS-7A4Q2-MK9L8",
-    "ATLAS-QM2K7-9AL84","ATLAS-4L8Q9-AKM27","ATLAS-KQ7M9-AL842","ATLAS-2A9KQ-7LM84",
-    "ATLAS-Q7A4K-M9L82","ATLAS-9LQ8M-2AK47","ATLAS-KM4A9-Q7L82","ATLAS-Q2L9A-KM847",
-    "ATLAS-7M9QK-AL842","ATLAS-AQ4K2-7M9L8","ATLAS-Q8M9L-2AK47","ATLAS-4QK7A-M9L82",
-    "ATLAS-2M8Q9-KA47L","ATLAS-QA9K7-4ML82","ATLAS-8K2M4-QA9L7","ATLAS-Q9L7A-2KM84",
-    "ATLAS-M4QK8-A927L","ATLAS-2A7Q9-KM4L8","ATLAS-Q8A9L-7KM42","ATLAS-K9Q2A-4L8M7",
-    "ATLAS-QM7L9-AK248","ATLAS-4K8A2-Q9LM7","ATLAS-9QK7M-AL842","ATLAS-A2Q9L-KM748"
-}
+local KEY_URL = "https://raw.githubusercontent.com/BIGzelvedn/KeySystem/main/keys.txt"
 
 local function IsValidKey(input)
-    for _, k in ipairs(VALID_KEYS) do
-        if input == k then
+    if not input or input == "" then
+        return false
+    end
+
+    local success, data = pcall(function()
+        return game:HttpGet(KEY_URL)
+    end)
+
+    if not success then
+        warn("Key server unreachable")
+        return false
+    end
+
+    for key in string.gmatch(data, "[^\r\n]+") do
+        if input == key then
             return true
         end
     end
+
     return false
 end
 
 -- =========================
--- ASK KEY
+-- keyi yapıstır 
 -- =========================
-local userKey = tostring(game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
-    and (getgenv().ATLAS_KEY or ""))
+local USER_KEY = _G.USER_KEY or ""  -- GUI'den _G.USER_KEY = "ATLAS-XXXX" yapacaksın
 
-if userKey == "" then
-    userKey = game:GetService("UserInputService"):GetFocusedTextBox()
-end
-
-if not IsValidKey(userKey) then
-    game:GetService("Players").LocalPlayer:Kick("Invalid Key")
+if not IsValidKey(USER_KEY) then
+    warn("INVALID OR EXPIRED KEY")
     return
 end
 
 -- =========================
--- PLACEID → SCRIPT
+-- script loader
 -- =========================
+local PlaceId = game.PlaceId
+
 local GameScripts = {
     [198116126] = "https://raw.githubusercontent.com/BIGzelvedn/TradelandsFREE/main/Trial.lua",
     [691884101] = "https://raw.githubusercontent.com/BIGzelvedn/DSS3FREE/main/trials.lua",
@@ -70,8 +59,9 @@ if scriptUrl then
     local success, err = pcall(function()
         loadstring(game:HttpGet(scriptUrl, true))()
     end)
+
     if not success then
-        warn("Script cannot load:", err)
+        warn("Script failed to load:", err)
     end
 else
     warn("Not Supported Game | PlaceId:", PlaceId)
