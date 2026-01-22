@@ -1,5 +1,5 @@
 -- =========================
--- PLACEID SCRIPT LOADER + KEY SYSTEM
+-- loader
 -- =========================
 
 if _G.GAME_LOADER_LOADED then return end
