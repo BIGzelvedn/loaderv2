@@ -1,67 +1,40 @@
+-- =========================
+-- PLACEID SCRIPT LOADER
+-- Prevent double load
+-- =========================
+
 if _G.GAME_LOADER_LOADED then return end
 _G.GAME_LOADER_LOADED = true
 
+-- Ensure game fully loaded
 if not game:IsLoaded() then
     game.Loaded:Wait()
 end
 
--- =========================
--- test
--- =========================
-local KEY_URL = "https://raw.githubusercontent.com/BIGzelvedn/KeySystem/main/keys.txt"
-
-local function IsValidKey(input)
-    if not input or input == "" then
-        return false
-    end
-
-    local success, data = pcall(function()
-        return game:HttpGet(KEY_URL)
-    end)
-
-    if not success then
-        warn("Key server unreachable")
-        return false
-    end
-
-    for key in string.gmatch(data, "[^\r\n]+") do
-        if input == key then
-            return true
-        end
-    end
-
-    return false
-end
-
--- =========================
--- keyi yapıstır 
--- =========================
-local USER_KEY = _G.USER_KEY or ""  -- GUI'den _G.USER_KEY = "ATLAS-XXXX" yapacaksın
-
-if not IsValidKey(USER_KEY) then
-    warn("INVALID OR EXPIRED KEY")
-    return
-end
-
--- =========================
--- script loader
--- =========================
 local PlaceId = game.PlaceId
 
+-- =========================
+--  PLACEID 
+-- dd new games by adding new entries
+-- =========================
 local GameScripts = {
-    [198116126] = "https://raw.githubusercontent.com/BIGzelvedn/TradelandsFREE/main/Trial.lua",
-    [691884101] = "https://raw.githubusercontent.com/BIGzelvedn/DSS3FREE/main/trials.lua",
+    [198116126] = "loadstring(game:HttpGet("https://raw.githubusercontent.com/BIGzelvedn/Tradelandsv2/refs/heads/main/Tradelands1",true))()",
+    [691884101] = "loadstring(game:HttpGet('https://raw.githubusercontent.com/BIGzelvedn/DSS3/refs/heads/main/Update'))()",
+    [139571938533204] = "https://raw.githubusercontent.com/BIGzelvedn/BSS/refs/heads/main/BalticSea",
 }
 
+-- =========================
+--  load it
+-- =========================
 local scriptUrl = GameScripts[PlaceId]
 
 if scriptUrl then
+    -- Load and execute the script
     local success, err = pcall(function()
         loadstring(game:HttpGet(scriptUrl, true))()
     end)
-
     if not success then
-        warn("Script failed to load:", err)
+        warn("script cannot load", err)
     end
 else
     warn("Not Supported Game | PlaceId:", PlaceId)
