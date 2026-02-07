@@ -19,8 +19,7 @@ local PlaceId = game.PlaceId
 -- =========================
 local GameScripts = {
     [198116126] = "loadstring(game:HttpGet("https://raw.githubusercontent.com/BIGzelvedn/Tradelandsv2/refs/heads/main/Tradelands1",true))()",
-    [691884101] = "loadstring(game:HttpGet('https://raw.githubusercontent.com/BIGzelvedn/DSS3/refs/heads/main/Update'))()",
-    [139571938533204] = "https://raw.githubusercontent.com/BIGzelvedn/BSS/refs/heads/main/BalticSea",
+    [691884101] = "loadstring(game:HttpGet('https://raw.githubusercontent.com/BIGzelvedn/DSS3FREE/refs/heads/main/trials'))()",
 }
 
 -- =========================
